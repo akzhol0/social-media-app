@@ -1,0 +1,9 @@
+Social App w design
+
+1) Auth
+2) CRUD actions on posts
+3) Likes, reposts, comments etc.
+4) User profile and theyre posts
+5) Possibility to text, subs, unsub etc interactions
+6) Search in posts
+7) will be more
