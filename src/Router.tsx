@@ -1,10 +1,16 @@
+import { BrowserRouter } from 'react-router-dom';
 import './assets/styles/global.scss';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
+import RouterApp from './components/RouterApp';
 
 function Router() {
   return (
-    <div>
-      <h1>Hello World!</h1>
-    </div>
+    <BrowserRouter>
+      <Header />
+      <RouterApp/>
+      <Footer />
+    </BrowserRouter>
   );
 }
 
