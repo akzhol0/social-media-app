@@ -1,21 +1,28 @@
-import { Route, Routes } from "react-router";
-import Options from "./options-page/Options";
-import Feed from "./feed-page/Feed";
-import User from "./user-page/User";
-import Unknown from "./unknown-page/Unknown";
+import { Route, Routes } from 'react-router';
+import Options from './options-page/Options';
+import Feed from './feed-page/Feed';
+import User from './user-page/User';
+import Unknown from './unknown-page/Unknown';
+import { ContextOverAll } from '../context/context';
+import Login from './auth/Login';
+import Register from './auth/Register';
 
 function RouterApp() {
   return (
-    <div className="w-full h-[800px] flex justify-center items-center">
-      <div className="w-[80%] h-full flex justify-start items-center">
-        <Options />
-        <Routes>
-          <Route path="/" element={<Feed />} />
-          <Route path="/user-profile" element={<User />} />
-          <Route path="*" element={<Unknown />} />
-        </Routes>
+    <ContextOverAll>
+      <div className="w-full h-[800px] flex justify-center items-center">
+        <div className="w-[80%] h-full flex justify-start items-center">
+          <Options />
+          <Routes>
+            <Route path="/" element={<Feed />} />
+            <Route path="/sign-in" element={<Login />} />
+            <Route path="/sign-up" element={<Register />} />
+            <Route path="/user-profile" element={<User />} />
+            <Route path="*" element={<Unknown />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </ContextOverAll>
   );
 }
 
