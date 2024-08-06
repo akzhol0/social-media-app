@@ -36,26 +36,26 @@ function PostCreate() {
   return (
     <div className="w-full h-full flex bg-white flex-col">
       <form onSubmit={addPosts} className="flex flex-col p-4 items-center">
-        <div className="flex gap-4 mb-4">
+        <div className="flex flex-col gap-4 mb-4">
           <input
             value={header}
             onChange={(e) => setHeader(e.target.value)}
             placeholder="Header"
-            className="w-[200px] h-[30px] border rounded ps-2"
+            className="w-[300px] h-[30px] border rounded ps-2"
             type="text"
           />
           <input
             value={image}
             onChange={(e) => setImage(e.target.value)}
             placeholder="Image link"
-            className="w-[200px] h-[30px] border rounded ps-2"
+            className="w-[300px] h-[30px] border rounded ps-2"
             type="text"
           />
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
-            className="w-[400px] h-[100px] border rounded ps-2"
+            className="w-[300px] h-[100px] border rounded ps-2"
             type="text"
           />
         </div>
@@ -63,7 +63,7 @@ function PostCreate() {
           onClick={() => {
             !userLogged && navigate('/sign-in');
           }}>
-          <MyPrimaryButton type="submit" className="w-[800px] py-3">
+          <MyPrimaryButton type="submit" className="w-[300px] py-3">
             Create Post
           </MyPrimaryButton>
         </span>

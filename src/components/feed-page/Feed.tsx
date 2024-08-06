@@ -27,7 +27,7 @@ function Feed() {
   };
 
   return (
-    <div className="w-full h-full bg-white overflow-x-scroll">
+    <div className="w-full h-full bg-white">
       {loaded ? <PostWrapper deletePost={deletePost} posts={posts} /> : <p>Loading...</p>}
     </div>
   );

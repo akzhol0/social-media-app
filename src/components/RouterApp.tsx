@@ -11,17 +11,17 @@ import PostCreate from './create-post-page/PostCreate';
 function RouterApp() {
   return (
     <ContextOverAll>
-      <div className="w-full h-[800px] flex justify-center items-center">
-        <div className="w-[80%] h-full flex justify-start items-center">
+      <div className="w-full flex flex-col h-screen justify-center items-center">
+        <div className="w-full xl:w-[80%] h-full justify-center flex items-center">
           <Options />
-          <Routes>
-            <Route path="/" element={<Feed />} />
-            <Route path="/sign-in" element={<Login />} />
-            <Route path="/sign-up" element={<Register />} />
-            <Route path="/user-profile" element={<User />} />
-            <Route path="/post-creation" element={<PostCreate />} />
-            <Route path="*" element={<Unknown />} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<Feed />} />
+              <Route path="/sign-in" element={<Login />} />
+              <Route path="/sign-up" element={<Register />} />
+              <Route path="/user-profile" element={<User />} />
+              <Route path="/post-creation" element={<PostCreate />} />
+              <Route path="*" element={<Unknown />} />
+            </Routes>
         </div>
       </div>
     </ContextOverAll>

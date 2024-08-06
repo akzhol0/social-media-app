@@ -63,7 +63,7 @@ function Register() {
   };
 
   return (
-    <div className="w-full h-full bg-white">
+    <div className="w-full h-full flex justify-center bg-white">
       <form onSubmit={handleSignUp} className="w-[300px] flex flex-col p-5 gap-2">
         <input
           value={name}
