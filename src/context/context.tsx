@@ -1,7 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { db } from '../firebase/config';
-import { useNavigate } from 'react-router';
 
 type ContextProps = {
   userLoggedInfo: any;
@@ -20,7 +19,6 @@ type ContextOverAllProps = {
 export function ContextOverAll({ children }: ContextOverAllProps) {
   const [userLoggedInfo, setUserLoggedInfo] = useState<any>([]);
   const [userLogged, setUserLogged] = useState(false);
-  const navigate = useNavigate()
 
   useEffect(() => {
     !userLogged && checkUserRegistration();
@@ -37,7 +35,6 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
       if (docSnap.exists()) {
         setUserLoggedInfo(docSnap.data());
         setUserLogged(true);
-        navigate('/user-profile')
       }
     }
   };

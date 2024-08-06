@@ -11,6 +11,7 @@ function Register() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [age, setAge] = useState('');
   const [email, setEmail] = useState('');
   const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
@@ -20,6 +21,7 @@ function Register() {
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
+      age === '' ||
       name === '' ||
       lastName === '' ||
       email === '' ||
@@ -45,6 +47,7 @@ function Register() {
           gender: gender,
           password: password,
           uid: userCredential.user.uid,
+          age: age,
         };
 
         addUserFirestore(userWritten);
@@ -75,6 +78,13 @@ function Register() {
           className="h-[30px] border ps-2"
           placeholder="Lastname"
           type="text"
+        />
+        <input
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+          className="h-[30px] border ps-2"
+          placeholder="Age"
+          type="number"
         />
         <div className="flex">
           <p>Gender: </p>

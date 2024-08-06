@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import MyButton from '../UI/my-button/MyButton';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -8,10 +8,14 @@ import { contextData } from '../../context/context';
 
 function Login() {
   const navigate = useNavigate();
-  const { setUserLoggedInfo, setUserLogged } = useContext(contextData);
+  const { setUserLoggedInfo, setUserLogged, userLogged } = useContext(contextData);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    userLogged && navigate('/user-profile')
+  }, [userLogged])
 
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

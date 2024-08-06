@@ -7,7 +7,7 @@ type MyButtonProps = {
 function MyButton({ children, className, type }: MyButtonProps) {
   return (
     <button
-      className={'py-1 px-4 bg-red-500 rounded-lg duration-150 text-white hover:bg-red-600 ' + className}
+      className={'py-1 px-4 bg-red-500 rounded-lg duration-150 text-white hover:bg-red-700 ' + className}
       type={type ? 'submit' : 'button'}
     >
       {children}

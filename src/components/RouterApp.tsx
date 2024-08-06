@@ -6,6 +6,7 @@ import Unknown from './unknown-page/Unknown';
 import { ContextOverAll } from '../context/context';
 import Login from './auth/Login';
 import Register from './auth/Register';
+import PostCreate from './create-post-page/PostCreate';
 
 function RouterApp() {
   return (
@@ -18,6 +19,7 @@ function RouterApp() {
             <Route path="/sign-in" element={<Login />} />
             <Route path="/sign-up" element={<Register />} />
             <Route path="/user-profile" element={<User />} />
+            <Route path="/post-creation" element={<PostCreate />} />
             <Route path="*" element={<Unknown />} />
           </Routes>
         </div>

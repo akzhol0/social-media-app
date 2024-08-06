@@ -13,6 +13,10 @@ function Options() {
       title: 'Feed',
       path: '/',
     },
+    {
+      title: 'Add Posts',
+      path: '/post-creation',
+    },
   ];
 
   return (
