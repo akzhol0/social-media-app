@@ -7,6 +7,8 @@ import { ContextOverAll } from '../context/context';
 import Login from './auth/Login';
 import Register from './auth/Register';
 import PostCreate from './create-post-page/PostCreate';
+import Bookmarks from './bookmark/Bookmarks';
+import UserForeign from './user-page/UserForeign';
 
 function RouterApp() {
   return (
@@ -20,6 +22,8 @@ function RouterApp() {
               <Route path="/sign-up" element={<Register />} />
               <Route path="/user-profile" element={<User />} />
               <Route path="/post-creation" element={<PostCreate />} />
+              <Route path="/bookmarks" element={<Bookmarks />} />
+              <Route path="/user/:uid" element={<UserForeign />} />
               <Route path="*" element={<Unknown />} />
             </Routes>
         </div>
