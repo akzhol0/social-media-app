@@ -63,12 +63,16 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
       <div className="flex flex-col ps-2">
         <div className="flex items-center">
           <div className="max-w-[40px] max-h-[40px] rounded-[50%] border border-gray-600 overflow-hidden">
-            <img className="w-full h-full" src={`/img/${item.userInfo.gender}.png`} alt="pfp" />
+            <img
+              className="w-full h-full"
+              src={item.userInfo.avatar === '' ? `/img/${item.userInfo.gender}.png` : item.userInfo.avatar}
+              alt="pfp"
+            />
           </div>
           <div className="w-full md:w-[400px] flex flex-col ms-2 justify-center">
             <div className="w-[200px] h-[22px] overflow-hidden">{item.date}</div>
             <Link to={`/user/${item.userInfo.uid}`}>
-              <span className='hover:underline'>
+              <span className="hover:underline">
                 {item.userInfo.name} {item.userInfo.lastName}
               </span>
             </Link>

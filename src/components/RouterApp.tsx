@@ -9,6 +9,7 @@ import Register from './auth/Register';
 import PostCreate from './create-post-page/PostCreate';
 import Bookmarks from './bookmark/Bookmarks';
 import UserForeign from './user-page/UserForeign';
+import EditProfile from './edit-profile/EditProfile';
 
 function RouterApp() {
   return (
@@ -24,6 +25,7 @@ function RouterApp() {
               <Route path="/post-creation" element={<PostCreate />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/user/:uid" element={<UserForeign />} />
+              <Route path="/user-profile/edit-profile" element={<EditProfile />} />
               <Route path="*" element={<Unknown />} />
             </Routes>
         </div>

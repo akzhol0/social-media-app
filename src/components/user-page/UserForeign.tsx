@@ -1,11 +1,13 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useParams } from 'react-router';
 import { db } from '../../firebase/config';
 import { useEffect, useState } from 'react';
+import PostWrapper from '../posts/PostWrapper';
 
 function UserForeign() {
   const { uid } = useParams();
   const [userInfo, setUserInfo] = useState<any>([]);
+  const [userPosts, setUserPosts] = useState<any>([]);
   const [loaded, setLoaded] = useState(false);
 
   const getUserData = async () => {
@@ -14,6 +16,7 @@ function UserForeign() {
 
     if (docSnap.exists()) {
       setUserInfo(docSnap.data());
+      getUserPosts();
       setLoaded(true);
     }
   };
@@ -22,6 +25,24 @@ function UserForeign() {
     getUserData();
   }, []);
 
+  const getUserPosts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+
+    querySnapshot.forEach((doc: any) => {
+      const response = doc.data();
+
+      if (response.userInfo.uid === uid) {
+        setUserPosts((prev: any) => [...prev, { ...response, id: doc.id }]);
+        setLoaded(true);
+      }
+    });
+  };
+
+  const deletePost = async (id: string) => {
+    await deleteDoc(doc(db, 'posts', `${id}`));
+    setUserPosts(userPosts.filter((item: any) => item.id !== id));
+  };
+
   return (
     <div className="w-full h-full flex flex-col xl:flex-row bg-white my-2 items-center xl:items-start">
       {loaded ? (
@@ -29,12 +50,12 @@ function UserForeign() {
           <div className="flex flex-col md:flex-row">
             <div className="min-w-[300px] h-[300px]">
               <img
-                className="w-full h-full object-contain"
-                src={`/img/${userInfo.gender}.png`}
+                className="w-full h-full object-cover"
+                src={userInfo.avatar === '' ? `/img/${userInfo.gender}.png` : userInfo.avatar}
                 alt="profile picture"
               />
             </div>
-            <div className="flex flex-col px-4 py-2 md:px-0 md:py-2">
+            <div className="flex flex-col px-4 py-2 md:px-0 md:py-2 ms-2">
               <p>
                 Name: {userInfo.name} {userInfo.lastName}
               </p>
@@ -43,14 +64,14 @@ function UserForeign() {
               <p>Email: {userInfo.email}</p>
             </div>
           </div>
-          {/* <div>
-            <p className="text-center text-[30px]">{userLoggedInfo.name}'s posts</p>
+          <div>
+            <p className="text-center text-[30px]">{userInfo.name}'s posts</p>
             {loaded ? (
-              <PostWrapper deletePost={deletePost} posts={posts} />
+              <PostWrapper deletePost={deletePost} posts={userPosts} />
             ) : (
               <p className="text-center text-[20px]">Empty</p>
             )}
-          </div> */}
+          </div>
         </div>
       ) : (
         <p>Loading...</p>

@@ -49,6 +49,7 @@ function Register() {
           uid: userCredential.user.uid,
           age: age,
           bookmarks: [],
+          avatar: '',
         };
 
         addUserFirestore(userWritten);

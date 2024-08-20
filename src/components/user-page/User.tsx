@@ -43,12 +43,16 @@ function User() {
       <div className="flex flex-col md:flex-row">
         <div className="min-w-[300px] h-[300px]">
           <img
-            className="w-full h-full object-contain"
-            src={`/img/${userLoggedInfo.gender}.png`}
+            className="w-full h-full object-cover"
+            src={
+              userLoggedInfo.avatar === ''
+                ? `/img/${userLoggedInfo.gender}.png`
+                : userLoggedInfo.avatar
+            }
             alt="profile picture"
           />
         </div>
-        <div className="flex flex-col px-4 py-2 md:px-0 md:py-2">
+        <div className="flex flex-col px-4 py-2 md:px-0 md:py-2 ms-2">
           <p>
             Name: {userLoggedInfo.name} {userLoggedInfo.lastName}
           </p>
@@ -66,6 +70,9 @@ function User() {
           </span>
           <Link to="/post-creation">
             <MyPrimaryButton className="w-full mt-2">Create Post</MyPrimaryButton>
+          </Link>
+          <Link to="/user-profile/edit-profile">
+            <MyPrimaryButton className="w-full mt-2">Edit Profile</MyPrimaryButton>
           </Link>
         </div>
       </div>
