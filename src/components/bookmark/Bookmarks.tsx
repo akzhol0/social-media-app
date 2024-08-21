@@ -1,27 +1,11 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { contextData } from '../../context/context';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import PostWrapper from '../posts/PostWrapper';
 
 function Bookmarks() {
-  const { userLoggedInfo } = useContext(contextData);
-  const [bookmarks, setBookmarks] = useState<any>();
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    userLoggedInfo !== undefined && getBookmarks();
-  }, [userLoggedInfo]);
-
-  const getBookmarks = async () => {
-    const docRef = doc(db, 'users', `${userLoggedInfo.uid}`);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setBookmarks(docSnap.data().bookmarks);
-      setLoaded(true);
-    }
-  };
+  const { userLoggedInfo, bookmarks, setBookmarks, booksLoaded } = useContext(contextData);
 
   const deletePost = (id: string) => {
     console.log(id);
@@ -48,7 +32,7 @@ function Bookmarks() {
 
   return (
     <div className="w-full h-full bg-white">
-      {loaded ? (
+      {booksLoaded ? (
         bookmarks.length ? (
           <>
             <PostWrapper

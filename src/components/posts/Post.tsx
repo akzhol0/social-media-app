@@ -11,22 +11,13 @@ type PostProps = {
 };
 
 function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
-  const { userLoggedInfo, userLogged } = useContext(contextData);
+  const { userLoggedInfo, userLogged, bookmarks } = useContext(contextData);
   const [modal, setModal] = useState(false);
   const [addedToBoomarks, setAddedToBoomarks] = useState(false);
 
   useEffect(() => {
-    getBookmarks();
+    checkIfPostAddedToBookmarks(bookmarks);
   }, []);
-
-  const getBookmarks = async () => {
-    const docRef = doc(db, 'users', `${userLoggedInfo.uid}`);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      checkIfPostAddedToBookmarks(docSnap.data().bookmarks);
-    }
-  };
 
   const addToBookmarks = async () => {
     const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
@@ -44,6 +35,8 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
   };
 
   const checkIfPostAddedToBookmarks = async (bookmarks: any) => {
+    if (bookmarks === undefined) return;
+    
     bookmarks.map((itemcb: any) => {
       if (itemcb.id === item.id) {
         setAddedToBoomarks(true);
@@ -65,7 +58,11 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
           <div className="max-w-[40px] max-h-[40px] rounded-[50%] border border-gray-600 overflow-hidden">
             <img
               className="w-full h-full"
-              src={item.userInfo.avatar === '' ? `/img/${item.userInfo.gender}.png` : item.userInfo.avatar}
+              src={
+                item.userInfo.avatar === ''
+                  ? `/img/${item.userInfo.gender}.png`
+                  : item.userInfo.avatar
+              }
               alt="pfp"
             />
           </div>

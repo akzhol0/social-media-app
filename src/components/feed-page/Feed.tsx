@@ -1,10 +1,12 @@
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, updateDoc } from 'firebase/firestore';
 import PostWrapper from '../posts/PostWrapper';
 import { db } from '../../firebase/config';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { contextData } from '../../context/context';
 import { doc, deleteDoc } from 'firebase/firestore';
 
 function Feed() {
+  const { bookmarks, userLoggedInfo, setBookmarks } = useContext(contextData);
   const [posts, setPosts] = useState<any>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -26,9 +28,28 @@ function Feed() {
     });
   };
 
+  async function foo() {
+    if (bookmarks === undefined) {
+      return;
+    }
+
+    const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
+    await updateDoc(docrefref, {
+      bookmarks: [...bookmarks],
+    });
+  }
+
+  useEffect(() => {
+    foo();
+  }, [bookmarks]);
+
+  const deleteFromBookmarks = async (itemcb: any) => {
+    setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
+  };
+
   return (
     <div className="w-full h-full bg-white">
-      {loaded ? <PostWrapper deletePost={deletePost} posts={posts} /> : <p>Loading...</p>}
+      {loaded ? <PostWrapper deleteFromBookmarks={deleteFromBookmarks} deletePost={deletePost} posts={posts} /> : <p>Loading...</p>}
     </div>
   );
 }
