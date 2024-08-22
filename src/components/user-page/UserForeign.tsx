@@ -1,10 +1,12 @@
 import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useParams } from 'react-router';
 import { db } from '../../firebase/config';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import PostWrapper from '../posts/PostWrapper';
+import { contextData } from '../../context/context';
 
 function UserForeign() {
+  const { allPosts, setAllPosts } = useContext(contextData)
   const { uid } = useParams();
   const [userInfo, setUserInfo] = useState<any>([]);
   const [userPosts, setUserPosts] = useState<any>([]);
@@ -41,6 +43,7 @@ function UserForeign() {
   const deletePost = async (id: string) => {
     await deleteDoc(doc(db, 'posts', `${id}`));
     setUserPosts(userPosts.filter((item: any) => item.id !== id));
+    setAllPosts(allPosts.filter((item: any) => item.id !== id));
   };
 
   return (
@@ -48,9 +51,9 @@ function UserForeign() {
       {loaded ? (
         <div className="w-full h-full bg-white">
           <div className="flex flex-col md:flex-row">
-            <div className="min-w-[300px] h-[300px]">
+            <div className="min-w-[300px] h-[300px] flex justify-center">
               <img
-                className="w-full h-full object-cover"
+                className="w-[80%] md:w-full h-full object-cover"
                 src={userInfo.avatar === '' ? `/img/${userInfo.gender}.png` : userInfo.avatar}
                 alt="profile picture"
               />
@@ -61,7 +64,6 @@ function UserForeign() {
               </p>
               <p>Age: {userInfo.age}</p>
               {userInfo.gender !== 'Unknown' && <p>Gender: {userInfo.gender}</p>}
-              <p>Email: {userInfo.email}</p>
             </div>
           </div>
           <div>

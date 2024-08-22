@@ -15,12 +15,9 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
   const [modal, setModal] = useState(false);
   const [addedToBoomarks, setAddedToBoomarks] = useState(false);
 
-  useEffect(() => {
-    checkIfPostAddedToBookmarks(bookmarks);
-  }, []);
-
   const addToBookmarks = async () => {
     const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
+
     const foo = async (bookmarkscb: any) => {
       await updateDoc(docrefref, {
         bookmarks: [...bookmarkscb, { ...item }],
@@ -34,10 +31,14 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     }
   };
 
-  const checkIfPostAddedToBookmarks = async (bookmarks: any) => {
+  useEffect(() => {
+    checkIfPostAddedToBookmarks();
+  }, []);
+
+  const checkIfPostAddedToBookmarks = async () => {
     if (bookmarks === undefined) return;
-    
-    bookmarks.map((itemcb: any) => {
+
+    await bookmarks.map((itemcb: any) => {
       if (itemcb.id === item.id) {
         setAddedToBoomarks(true);
       }
@@ -90,7 +91,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
                     {addedToBoomarks ? (
                       <p
                         onClick={() => {
-                          deleteFromBookmarks ? deleteFromBookmarks(item) : '';
+                          deleteFromBookmarks ? deleteFromBookmarks(item) : console.log('123');
                           setAddedToBoomarks(false);
                         }}>
                         Delete from Bookmarks
@@ -106,7 +107,6 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
                     )}
                   </span>
                 )}
-                <p>...</p>
               </div>
             )}
           </div>

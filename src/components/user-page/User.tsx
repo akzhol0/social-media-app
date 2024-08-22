@@ -4,36 +4,31 @@ import { useNavigate } from 'react-router';
 import MyButton from '../UI/my-button/MyButton';
 import MyPrimaryButton from '../UI/my-button/MyPrimaryButton';
 import { Link } from 'react-router-dom';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import PostWrapper from '../posts/PostWrapper';
 
 function User() {
-  const { userLogged, userLoggedInfo, setUserLogged, setUserLoggedInfo } = useContext(contextData);
+  const { userLogged, userLoggedInfo, setUserLogged, setUserLoggedInfo, allPosts, setAllPosts } =
+    useContext(contextData);
   const navigate = useNavigate();
-
-  const [posts, setPosts] = useState<any>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [userPosts, setUserPosts] = useState<any>([]);
 
   useEffect(() => {
     !userLogged && navigate('/sign-in');
     getUserPosts();
   }, []);
 
-  const deletePost = async (itemUid: string) => {
+  const deleteUserPost = async (itemUid: string) => {
     await deleteDoc(doc(db, 'posts', `${itemUid}`));
-    setPosts(posts.filter((item: any) => item.id !== itemUid));
+    setUserPosts(userPosts.filter((item: any) => item.id !== itemUid));
+    setAllPosts(allPosts.filter((item: any) => item.id !== itemUid));
   };
 
   const getUserPosts = async () => {
-    const querySnapshot = await getDocs(collection(db, 'posts'));
-
-    querySnapshot.forEach((doc: any) => {
-      const response = doc.data();
-
-      if (response.userInfo.uid === userLoggedInfo.uid) {
-        setPosts((prev: any) => [...prev, { ...response, id: doc.id }]);
-        setLoaded(true);
+    allPosts.map((item: any) => {
+      if (item.userInfo.uid === userLoggedInfo.uid) {
+        setUserPosts((prev: any) => [...prev, { ...item, id: item.id }]);
       }
     });
   };
@@ -41,9 +36,9 @@ function User() {
   return (
     <div className="w-full h-full bg-white">
       <div className="flex flex-col md:flex-row">
-        <div className="min-w-[300px] h-[300px]">
+        <div className="min-w-[300px] h-[300px] flex justify-center">
           <img
-            className="w-full h-full object-cover"
+            className="w-[80%] md:w-full flex justify-center h-full object-cover"
             src={
               userLoggedInfo.avatar === ''
                 ? `/img/${userLoggedInfo.gender}.png`
@@ -78,11 +73,7 @@ function User() {
       </div>
       <div>
         <p className="text-center text-[30px]">{userLoggedInfo.name}'s posts</p>
-        {loaded ? (
-          <PostWrapper deletePost={deletePost} posts={posts} />
-        ) : (
-          <p className="text-center text-[20px]">Empty</p>
-        )}
+        <PostWrapper deletePost={deleteUserPost} posts={userPosts} />
       </div>
     </div>
   );

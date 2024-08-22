@@ -8,6 +8,7 @@ function Options() {
   const { userLogged } = useContext(contextData);
   const [activeOption, setActiveOption] = useState<string>(location.pathname);
   const [brgr, setBrgr] = useState(false);
+  
   const loggedOptions = [
     {
       title: 'User',

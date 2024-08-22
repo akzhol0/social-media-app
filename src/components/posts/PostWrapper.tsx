@@ -9,9 +9,18 @@ type PostWrapperProps = {
 function PostWrapper({ posts, deletePost, deleteFromBookmarks }: PostWrapperProps) {
   return (
     <>
-      {posts.map((item: any) => (
-        <Post deleteFromBookmarks={deleteFromBookmarks} deletePost={deletePost} key={item.date} item={item} />
-      ))}
+      {posts.length ? (
+        posts.map((item: any) => (
+          <Post
+            deleteFromBookmarks={deleteFromBookmarks}
+            deletePost={deletePost}
+            key={item.date}
+            item={item}
+          />
+        ))
+      ) : (
+        <p>Empty...</p>
+      )}
     </>
   );
 }

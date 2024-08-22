@@ -6,7 +6,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
 function PostCreate() {
-  const { userLogged, userLoggedInfo } = useContext(contextData);
+  const { userLogged, userLoggedInfo, setAllPosts } = useContext(contextData);
   const navigate = useNavigate();
 
   const [header, setHeader] = useState('');
@@ -15,6 +15,7 @@ function PostCreate() {
 
   const addPosts = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const post = {
       userInfo: {
         ...userLoggedInfo,
@@ -25,8 +26,13 @@ function PostCreate() {
       image: image,
     };
 
+    setAllPosts((prev: any) => [...prev, post]);
     addFirebase(post);
     navigate('/user-profile');
+
+    // setTimeout(() => {
+    //   location.reload();
+    // }, 100);
   };
 
   const addFirebase = async (post: any) => {

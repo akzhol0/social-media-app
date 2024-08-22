@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { db } from '../firebase/config';
 
@@ -9,8 +9,10 @@ type ContextProps = {
   setUserLogged: (arg0: boolean) => void;
   checkUserRegistration: () => void;
   bookmarks: any;
-  booksLoaded: boolean;
   setBookmarks: (arg0: any) => void;
+  allPosts: any;
+  deletePost: (arg0: any) => void;
+  setAllPosts: (arg0: any) => void;
 };
 
 export const contextData = createContext({} as ContextProps);
@@ -23,13 +25,32 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
   const [userLoggedInfo, setUserLoggedInfo] = useState<any>([]);
   const [userLogged, setUserLogged] = useState(false);
 
-  const [bookmarks, setBookmarks] = useState<any>();
-  const [booksLoaded, setBooksLoaded] = useState(false);
+  const [bookmarks, setBookmarks] = useState<any>([]);
+
+  const [allPosts, setAllPosts] = useState<any>([]);
+  const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
     !userLogged && checkUserRegistration();
     userLogged && getBookmarks();
+    !fetched && getAllPosts();
   });
+
+  // get all posts
+  const getAllPosts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+
+    querySnapshot.forEach((doc: any) => {
+      setAllPosts((prev: any) => [...prev, { ...doc.data(), id: doc.id }]);
+      setFetched(true);
+    });
+  };
+
+  // delete post
+  const deletePost = async (itemUid: string) => {
+    await deleteDoc(doc(db, 'posts', `${itemUid}`));
+    setAllPosts(allPosts.filter((item: any) => item.id !== itemUid));
+  };
 
   // get all bookmarks
   const getBookmarks = async () => {
@@ -38,7 +59,6 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
 
     if (docSnap.exists()) {
       setBookmarks(docSnap.data().bookmarks);
-      setBooksLoaded(true);
     }
   };
 
@@ -57,6 +77,7 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
     }
   };
 
+
   return (
     <contextData.Provider
       value={{
@@ -66,8 +87,10 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
         setUserLogged,
         checkUserRegistration,
         bookmarks,
-        booksLoaded,
         setBookmarks,
+        allPosts,
+        deletePost,
+        setAllPosts,
       }}>
       {children}
     </contextData.Provider>

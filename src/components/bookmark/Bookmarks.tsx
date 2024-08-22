@@ -1,52 +1,38 @@
+import { contextData } from '../../context/context';
+import { useContext, useEffect, useState } from 'react';
+import PostWrapper from '../posts/PostWrapper';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { contextData } from '../../context/context';
-import { useContext, useEffect } from 'react';
-import PostWrapper from '../posts/PostWrapper';
 
 function Bookmarks() {
-  const { userLoggedInfo, bookmarks, setBookmarks, booksLoaded } = useContext(contextData);
+  const { bookmarks, deletePost, setBookmarks, userLoggedInfo } = useContext(contextData);
+  const [update, setUpdate] = useState(0);
 
-  const deletePost = (id: string) => {
-    console.log(id);
+  const deleteFromBookmarks = async (itemcb: any) => {
+    setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
+    setUpdate(update + 1);
   };
 
-  async function foo() {
-    if (bookmarks === undefined) {
-      return;
-    }
+  useEffect(() => {
+    foo();
+  }, [update]);
 
-    const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
-    await updateDoc(docrefref, {
+  async function foo() {
+    if (update === 0) return;
+    const ref = doc(db, 'users', `${userLoggedInfo.uid}`);
+
+    await updateDoc(ref, {
       bookmarks: [...bookmarks],
     });
   }
 
-  useEffect(() => {
-    foo();
-  }, [bookmarks]);
-
-  const deleteFromBookmarks = async (itemcb: any) => {
-    setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
-  };
-
   return (
     <div className="w-full h-full bg-white">
-      {booksLoaded ? (
-        bookmarks.length ? (
-          <>
-            <PostWrapper
-              deletePost={deletePost}
-              posts={bookmarks}
-              deleteFromBookmarks={deleteFromBookmarks}
-            />
-          </>
-        ) : (
-          <h1>Empty</h1>
-        )
-      ) : (
-        <p>Loading...</p>
-      )}
+      <PostWrapper
+        deletePost={deletePost}
+        posts={bookmarks}
+        deleteFromBookmarks={deleteFromBookmarks}
+      />
     </div>
   );
 }
