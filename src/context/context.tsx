@@ -32,9 +32,12 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
 
   useEffect(() => {
     !userLogged && checkUserRegistration();
-    userLogged && getBookmarks();
     !fetched && getAllPosts();
-  });
+  }, []);
+
+  useEffect(() => {
+    getBookmarks();
+  }, [fetched]);
 
   // get all posts
   const getAllPosts = async () => {
@@ -76,7 +79,6 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
       }
     }
   };
-
 
   return (
     <contextData.Provider
