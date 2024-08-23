@@ -11,16 +11,50 @@ type PostProps = {
 };
 
 function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
-  const { userLoggedInfo, userLogged, bookmarks } = useContext(contextData);
+  const { userLoggedInfo, userLogged, bookmarks, setBookmarks, fetchedBooks } =
+    useContext(contextData);
   const [modal, setModal] = useState(false);
   const [addedToBoomarks, setAddedToBoomarks] = useState(false);
 
+  const [liked, setLiked] = useState(false);
+  const [likedUsers, setLikedUsers] = useState<any>([]);
+  const [likesAmount, setLikesAmount] = useState(item.likes.length);
+
+  const [fetched, setFetched] = useState(0);
+
+  const [update, setUpdate] = useState(0);
+
+  useEffect(() => {
+    getLikes();
+  }, []);
+
+  const getLikes = async () => {
+    setLikedUsers(item.likes);
+    setFetched(fetched + 1);
+  };
+
+  useEffect(() => {
+    if (fetchedBooks === 0) return;
+    checkIfPostAddedToBookmarks();
+  }, [fetchedBooks]);
+
+  useEffect(() => {
+    if (fetched === 0) return;
+    checkIfLiked();
+  }, [fetched]);
+
+  useEffect(() => {
+    if (update === 0) return;
+    foo();
+  }, [update]);
+
   const addToBookmarks = async () => {
+    setBookmarks((prev: any) => [...prev, item.id]);
     const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
 
     const foo = async (bookmarkscb: any) => {
       await updateDoc(docrefref, {
-        bookmarks: [...bookmarkscb, { ...item }],
+        bookmarks: [...bookmarkscb, item.id],
       });
     };
 
@@ -31,30 +65,71 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     }
   };
 
-  useEffect(() => {
-    checkIfPostAddedToBookmarks();
-  }, []);
-
   const checkIfPostAddedToBookmarks = async () => {
     if (bookmarks === undefined) return;
 
     await bookmarks.map((itemcb: any) => {
-      if (itemcb.id === item.id) {
+      if (itemcb === item.id) {
         setAddedToBoomarks(true);
       }
     });
   };
 
+  const checkIfLiked = async () => {
+    if (likedUsers === undefined || likedUsers.length === 0) return;
+
+    await likedUsers.map((itemcb: any) => {
+      if (itemcb.uid === userLoggedInfo.uid) {
+        setLiked(true);
+      }
+    });
+  };
+
+  async function foo() {
+    const ref = doc(db, 'posts', `${item.id}`);
+    await updateDoc(ref, {
+      likes: [...likedUsers],
+    });
+  }
+
+  async function dislike() {
+    setLiked(false);
+    setLikesAmount(likesAmount - 1);
+
+    setLikedUsers(likedUsers.filter((itemcb: any) => itemcb.uid !== userLoggedInfo.uid));
+    setUpdate(update + 1);
+  }
+
+  async function like() {
+    setLiked(true);
+    setLikesAmount(likesAmount + 1);
+
+    const ref = doc(db, 'posts', `${item.id}`);
+    await updateDoc(ref, {
+      likes: [...likedUsers, userLoggedInfo],
+    });
+    setLikedUsers((prev: any) => [...prev, item]);
+  }
+
   return (
     <div className="w-full min-h-[500px] flex flex-col xl:flex-row bg-white my-2 items-center xl:items-start">
-      <div className="flex max-w-[350px] min-w-[350px] h-[400px] md:max-w-[500px] md:min-w-[500px] md:h-[500px]">
+      <div className="relative flex max-w-[350px] min-w-[350px] h-[400px] md:max-w-[500px] md:min-w-[500px] md:h-[500px]">
         <img
           className="w-full h-full object-cover border bg-gray-200"
           src={item.image}
           alt="post logo"
         />
+        <div className="absolute flex justify-center items-center bottom-0 right-2 w-[80px] h-[60px] overflow-hidden">
+          <p className="bg-black px-2 text-white rounded">{likesAmount}</p>
+          <img
+            onClick={liked ? () => dislike() : () => like()}
+            className="w-full h-full cursor-pointer"
+            src={liked ? '/img/heart-full.png' : '/img/heart-empty.png'}
+            alt="like"
+          />
+        </div>
       </div>
-      <div className="flex flex-col ps-2">
+      <div className="w-full h-full flex flex-col ps-2">
         <div className="flex items-center">
           <div className="max-w-[40px] max-h-[40px] rounded-[50%] border border-gray-600 overflow-hidden">
             <img

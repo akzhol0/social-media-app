@@ -13,6 +13,7 @@ type ContextProps = {
   allPosts: any;
   deletePost: (arg0: any) => void;
   setAllPosts: (arg0: any) => void;
+  fetchedBooks: number;
 };
 
 export const contextData = createContext({} as ContextProps);
@@ -26,6 +27,7 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
   const [userLogged, setUserLogged] = useState(false);
 
   const [bookmarks, setBookmarks] = useState<any>([]);
+  const [fetchedBooks, setFetchedBooks] = useState(0);
 
   const [allPosts, setAllPosts] = useState<any>([]);
   const [fetched, setFetched] = useState(false);
@@ -62,6 +64,8 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
 
     if (docSnap.exists()) {
       setBookmarks(docSnap.data().bookmarks);
+      setFetchedBooks(fetchedBooks + 1);
+
     }
   };
 
@@ -93,6 +97,7 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
         allPosts,
         deletePost,
         setAllPosts,
+        fetchedBooks,
       }}>
       {children}
     </contextData.Provider>
