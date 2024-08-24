@@ -45,7 +45,7 @@ function Options() {
         <MyPrimaryButton className="absolute top-2 left-2">X</MyPrimaryButton>
       </span>
       <div
-        className={`fixed md:static min-w-[250px] duration-[.3s] h-full bg-white flex flex-col ${
+        className={`fixed z-20 md:static min-w-[250px] duration-[.3s] h-full bg-white flex flex-col ${
           brgr ? 'left-0 ' : 'left-[-250px] '
         }`}>
         {userLogged

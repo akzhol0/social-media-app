@@ -115,7 +115,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     <div className="w-full min-h-[500px] flex flex-col xl:flex-row bg-white my-2 items-center xl:items-start">
       <div className="relative flex max-w-[350px] min-w-[350px] h-[400px] md:max-w-[500px] md:min-w-[500px] md:h-[500px]">
         <img
-          className="w-full h-full object-cover border bg-gray-200"
+          className="w-full h-full object-cover border bg-gray-200 z-5"
           src={item.image}
           alt="post logo"
         />
