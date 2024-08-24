@@ -50,6 +50,7 @@ function Register() {
           age: age,
           bookmarks: [],
           avatar: '',
+          likes: [],
         };
 
         addUserFirestore(userWritten);

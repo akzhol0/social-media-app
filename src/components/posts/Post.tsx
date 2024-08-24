@@ -129,7 +129,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
           />
         </div>
       </div>
-      <div className="w-full h-full flex flex-col ps-2">
+      <div className="flex flex-col ps-2">
         <div className="flex items-center">
           <div className="max-w-[40px] max-h-[40px] rounded-[50%] border border-gray-600 overflow-hidden">
             <img
