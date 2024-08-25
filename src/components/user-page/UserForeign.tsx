@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { useParams } from 'react-router';
 import { db } from '../../firebase/config';
 import { useContext, useEffect, useState } from 'react';
@@ -6,11 +6,13 @@ import PostWrapper from '../posts/PostWrapper';
 import { contextData } from '../../context/context';
 
 function UserForeign() {
-  const { allPosts, setAllPosts } = useContext(contextData)
+  const { allPosts, setAllPosts, userLoggedInfo, bookmarks, setBookmarks } =
+    useContext(contextData);
   const { uid } = useParams();
   const [userInfo, setUserInfo] = useState<any>([]);
   const [userPosts, setUserPosts] = useState<any>([]);
   const [loaded, setLoaded] = useState(false);
+  const [update, setUpdate] = useState(0);
 
   const getUserData = async () => {
     const docRef = doc(db, 'users', `${uid}`);
@@ -26,6 +28,24 @@ function UserForeign() {
   useEffect(() => {
     getUserData();
   }, []);
+
+  const deleteFromBookmarks = async (itemcb: any) => {
+    setBookmarks(bookmarks.filter((item: any) => item !== itemcb.id));
+    setUpdate(update + 1);
+  };
+
+  useEffect(() => {
+    foo();
+  }, [update]);
+
+  async function foo() {
+    if (update === 0) return;
+    const ref = doc(db, 'users', `${userLoggedInfo.uid}`);
+
+    await updateDoc(ref, {
+      bookmarks: [...bookmarks],
+    });
+  }
 
   const getUserPosts = async () => {
     const querySnapshot = await getDocs(collection(db, 'posts'));
@@ -69,7 +89,11 @@ function UserForeign() {
           <div>
             <p className="text-center text-[30px]">{userInfo.name}'s posts</p>
             {loaded ? (
-              <PostWrapper deletePost={deletePost} posts={userPosts} />
+              <PostWrapper
+                deleteFromBookmarks={deleteFromBookmarks}
+                deletePost={deletePost}
+                posts={userPosts}
+              />
             ) : (
               <p className="text-center text-[20px]">Empty</p>
             )}

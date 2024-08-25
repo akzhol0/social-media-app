@@ -11,7 +11,7 @@ function Feed() {
   const [fetched, setFetched] = useState(false);
 
   const deleteFromBookmarks = async (itemcb: any) => {
-    setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
+    setBookmarks(bookmarks.filter((item: any) => item !== itemcb.id));
     setUpdateFeed(updateFeed + 1);
   };
 

@@ -36,7 +36,8 @@ function Bookmarks() {
   };
 
   const deleteFromBookmarks = async (itemcb: any) => {
-    setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
+    setBookmarks(bookmarks.filter((item: any) => item !== itemcb.id));
+    setUserBookmarks(userBookmarks.filter((item: any) => item.id !== itemcb.id));
     setUpdate(update + 1);
   };
 

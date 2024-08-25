@@ -184,7 +184,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
                     {addedToBoomarks ? (
                       <p
                         onClick={() => {
-                          deleteFromBookmarks ? deleteFromBookmarks(item) : console.log('123');
+                          deleteFromBookmarks && deleteFromBookmarks(item);
                           setAddedToBoomarks(false);
                         }}>
                         Delete from Bookmarks
