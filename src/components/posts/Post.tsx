@@ -11,7 +11,7 @@ type PostProps = {
 };
 
 function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
-  const { userLoggedInfo, userLogged, bookmarks, setBookmarks, fetchedBooks } =
+  const { userLoggedInfo, userLogged, bookmarks, setBookmarks, fetchedBooks, allPosts } =
     useContext(contextData);
   const [modal, setModal] = useState(false);
   const [addedToBoomarks, setAddedToBoomarks] = useState(false);
@@ -23,15 +23,11 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
   const [fetched, setFetched] = useState(0);
 
   const [update, setUpdate] = useState(0);
+  const [update2, setUpdate2] = useState(0);
 
   useEffect(() => {
     getLikes();
   }, []);
-
-  const getLikes = async () => {
-    setLikedUsers(item.likes);
-    setFetched(fetched + 1);
-  };
 
   useEffect(() => {
     if (fetchedBooks === 0) return;
@@ -47,6 +43,11 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     if (update === 0) return;
     foo();
   }, [update]);
+
+  const getLikes = async () => {
+    setLikedUsers(item.likes);
+    setFetched(fetched + 1);
+  };
 
   const addToBookmarks = async () => {
     setBookmarks((prev: any) => [...prev, item.id]);
@@ -76,7 +77,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
   };
 
   const checkIfLiked = async () => {
-    if (likedUsers === undefined || likedUsers.length === 0) return;
+    if (likedUsers === undefined) return;
 
     await likedUsers.map((itemcb: any) => {
       if (itemcb.uid === userLoggedInfo.uid) {
@@ -100,15 +101,32 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     setUpdate(update + 1);
   }
 
+  async function foo2() {
+    if (update2 === 0) return;
+    setLikedUsers((prev: any) => [...prev, item]);
+    getLikes();
+  }
+
+  useEffect(() => {
+    foo2();
+  }, [update2]);
+
   async function like() {
     setLiked(true);
     setLikesAmount(likesAmount + 1);
+    setLikedUsers((prev: any) => [...prev, item]);
+    setUpdate2(update + 1);
 
     const ref = doc(db, 'posts', `${item.id}`);
     await updateDoc(ref, {
       likes: [...likedUsers, userLoggedInfo],
     });
-    setLikedUsers((prev: any) => [...prev, item]);
+
+    allPosts.map((itemcb: any) => {
+      if (itemcb.id === item.id) {
+        itemcb.likes.push(item);
+      }
+    });
   }
 
   return (

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import MyButton from '../UI/my-button/MyButton';
 import MyPrimaryButton from '../UI/my-button/MyPrimaryButton';
 import { Link } from 'react-router-dom';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import PostWrapper from '../posts/PostWrapper';
 
@@ -26,9 +26,11 @@ function User() {
   };
 
   const getUserPosts = async () => {
-    allPosts.map((item: any) => {
-      if (item.userInfo.uid === userLoggedInfo.uid) {
-        setUserPosts((prev: any) => [...prev, { ...item, id: item.id }]);
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+
+    querySnapshot.forEach((doc: any) => {
+      if (doc.data().userInfo.uid === userLoggedInfo.uid) {
+        setUserPosts((prev: any) => [...prev, { ...doc.data(), id: doc.id }]);
       }
     });
   };

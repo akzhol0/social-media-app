@@ -19,7 +19,7 @@ function PostWrapper({ posts, deletePost, deleteFromBookmarks }: PostWrapperProp
           />
         ))
       ) : (
-        <p>Empty...</p>
+        <p className='w-full h-full'>Empty...</p>
       )}
     </>
   );

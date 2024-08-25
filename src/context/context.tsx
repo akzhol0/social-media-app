@@ -65,7 +65,6 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
     if (docSnap.exists()) {
       setBookmarks(docSnap.data().bookmarks);
       setFetchedBooks(fetchedBooks + 1);
-
     }
   };
 

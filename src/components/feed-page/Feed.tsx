@@ -1,12 +1,14 @@
 import PostWrapper from '../posts/PostWrapper';
 import { useContext, useEffect, useState } from 'react';
 import { contextData } from '../../context/context';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
 function Feed() {
-  const { allPosts, deletePost, bookmarks, setBookmarks, userLoggedInfo } = useContext(contextData);
+  const { deletePost, bookmarks, setBookmarks, userLoggedInfo } = useContext(contextData);
   const [updateFeed, setUpdateFeed] = useState(0);
+  const [posts, setPosts] = useState<any>([]);
+  const [fetched, setFetched] = useState(false);
 
   const deleteFromBookmarks = async (itemcb: any) => {
     setBookmarks(bookmarks.filter((item: any) => item.id !== itemcb.id));
@@ -14,8 +16,21 @@ function Feed() {
   };
 
   useEffect(() => {
+    !fetched && getAllPosts();
+  }, []);
+
+  useEffect(() => {
     foo();
   }, [updateFeed]);
+
+  const getAllPosts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+
+    querySnapshot.forEach((doc: any) => {
+      setPosts((prev: any) => [...prev, { ...doc.data(), id: doc.id }]);
+      setFetched(true);
+    });
+  };
 
   async function foo() {
     if (updateFeed === 0) return;
@@ -28,11 +43,15 @@ function Feed() {
 
   return (
     <div className="w-full h-full bg-white">
-      <PostWrapper
-        deletePost={deletePost}
-        posts={allPosts}
-        deleteFromBookmarks={deleteFromBookmarks}
-      />
+      {fetched ? (
+        <PostWrapper
+          deletePost={deletePost}
+          posts={posts}
+          deleteFromBookmarks={deleteFromBookmarks}
+        />
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }

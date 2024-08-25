@@ -1,26 +1,38 @@
 import { contextData } from '../../context/context';
 import { useContext, useEffect, useState } from 'react';
 import PostWrapper from '../posts/PostWrapper';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
 function Bookmarks() {
-  const { bookmarks, deletePost, setBookmarks, userLoggedInfo, allPosts } = useContext(contextData);
+  const { bookmarks, deletePost, setBookmarks, userLoggedInfo } = useContext(contextData);
   const [update, setUpdate] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [posts, setPosts] = useState<any>([]);
 
   const [userBookmarks, setUserBookmarks] = useState<any>([]);
 
-  const getNeedBookmarks = () => {
-    allPosts.map((itemPost: any) => {
+  const getAllPosts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+
+    querySnapshot.forEach((item: any) => {
+      setPosts((prev: any) => [...prev, { ...item.data(), id: item.id }]);
+    });
+    setLoaded(true);
+  };
+
+  useEffect(() => {
+    getNeedBookmarks(posts);
+  }, [posts]);
+
+  const getNeedBookmarks = (posts: any) => {
+    posts.map((itemPost: any) => {
       bookmarks.map((itemBooks: any) => {
         if (itemPost.id === itemBooks) {
           setUserBookmarks((prev: any) => [...prev, itemPost]);
         }
       });
     });
-
-    setLoaded(true);
   };
 
   const deleteFromBookmarks = async (itemcb: any) => {
@@ -29,8 +41,11 @@ function Bookmarks() {
   };
 
   useEffect(() => {
+    getAllPosts();
+  }, []);
+
+  useEffect(() => {
     foo();
-    getNeedBookmarks();
   }, [update]);
 
   async function foo() {
