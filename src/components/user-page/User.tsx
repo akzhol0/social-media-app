@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router';
 import MyButton from '../UI/my-button/MyButton';
 import MyPrimaryButton from '../UI/my-button/MyPrimaryButton';
 import { Link } from 'react-router-dom';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import PostWrapper from '../posts/PostWrapper';
 
 function User() {
-  const { userLogged, userLoggedInfo, setUserLogged, setUserLoggedInfo, allPosts, setAllPosts } =
+  const { userLogged, userLoggedInfo, setUserLogged, setUserLoggedInfo, bookmarks, setBookmarks } =
     useContext(contextData);
   const navigate = useNavigate();
   const [userPosts, setUserPosts] = useState<any>([]);
+  const [update, setUpdate] = useState(0);
 
   useEffect(() => {
     !userLogged && navigate('/sign-in');
@@ -22,7 +23,6 @@ function User() {
   const deleteUserPost = async (itemUid: string) => {
     await deleteDoc(doc(db, 'posts', `${itemUid}`));
     setUserPosts(userPosts.filter((item: any) => item.id !== itemUid));
-    setAllPosts(allPosts.filter((item: any) => item.id !== itemUid));
   };
 
   const getUserPosts = async () => {
@@ -34,6 +34,24 @@ function User() {
       }
     });
   };
+
+  const deleteFromBookmarks = async (itemcb: any) => {
+    setBookmarks(bookmarks.filter((item: any) => item !== itemcb.id));
+    setUpdate(update + 1);
+  };
+
+  useEffect(() => {
+    deleteBookmarkEffect();
+  }, [update]);
+
+  async function deleteBookmarkEffect() {
+    if (update === 0) return;
+    const ref = doc(db, 'users', `${userLoggedInfo.uid}`);
+
+    await updateDoc(ref, {
+      bookmarks: [...bookmarks],
+    });
+  }
 
   return (
     <div className="w-full h-full bg-white">
@@ -75,7 +93,7 @@ function User() {
       </div>
       <div>
         <p className="text-center text-[30px]">{userLoggedInfo.name}'s posts</p>
-        <PostWrapper deletePost={deleteUserPost} posts={userPosts} />
+        <PostWrapper deleteFromBookmarks={deleteFromBookmarks} deletePost={deleteUserPost} posts={userPosts} />
       </div>
     </div>
   );

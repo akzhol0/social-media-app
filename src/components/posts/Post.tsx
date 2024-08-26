@@ -11,7 +11,7 @@ type PostProps = {
 };
 
 function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
-  const { userLoggedInfo, userLogged, bookmarks, setBookmarks, fetchedBooks, allPosts } =
+  const { userLoggedInfo, userLogged, bookmarks, setBookmarks, fetchedBooks } =
     useContext(contextData);
   const [modal, setModal] = useState(false);
   const [addedToBoomarks, setAddedToBoomarks] = useState(false);
@@ -23,7 +23,6 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
   const [fetched, setFetched] = useState(0);
 
   const [update, setUpdate] = useState(0);
-  const [update2, setUpdate2] = useState(0);
 
   useEffect(() => {
     getLikes();
@@ -39,11 +38,6 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     checkIfLiked();
   }, [fetched]);
 
-  useEffect(() => {
-    if (update === 0) return;
-    foo();
-  }, [update]);
-
   const getLikes = async () => {
     setLikedUsers(item.likes);
     setFetched(fetched + 1);
@@ -51,6 +45,7 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
 
   const addToBookmarks = async () => {
     setBookmarks((prev: any) => [...prev, item.id]);
+    console.log(item.id)
     const docrefref = doc(db, 'users', `${userLoggedInfo.uid}`);
 
     const foo = async (bookmarkscb: any) => {
@@ -86,46 +81,32 @@ function Post({ item, deletePost, deleteFromBookmarks }: PostProps) {
     });
   };
 
-  async function foo() {
+  async function dislike() {
+    setLiked(false);
+    setLikesAmount(likesAmount - 1);
+
+    setUpdate(update + 1);
+  }
+
+  useEffect(() => {
+    if (update === 0) return;
+    dislikeEffect();
+  }, [update]);
+
+  async function dislikeEffect() {
     const ref = doc(db, 'posts', `${item.id}`);
     await updateDoc(ref, {
       likes: [...likedUsers],
     });
   }
 
-  async function dislike() {
-    setLiked(false);
-    setLikesAmount(likesAmount - 1);
-
-    setLikedUsers(likedUsers.filter((itemcb: any) => itemcb.uid !== userLoggedInfo.uid));
-    setUpdate(update + 1);
-  }
-
-  async function foo2() {
-    if (update2 === 0) return;
-    setLikedUsers((prev: any) => [...prev, item]);
-    getLikes();
-  }
-
-  useEffect(() => {
-    foo2();
-  }, [update2]);
-
   async function like() {
     setLiked(true);
     setLikesAmount(likesAmount + 1);
-    setLikedUsers((prev: any) => [...prev, item]);
-    setUpdate2(update + 1);
 
     const ref = doc(db, 'posts', `${item.id}`);
     await updateDoc(ref, {
       likes: [...likedUsers, userLoggedInfo],
-    });
-
-    allPosts.map((itemcb: any) => {
-      if (itemcb.id === item.id) {
-        itemcb.likes.push(item);
-      }
     });
   }
 

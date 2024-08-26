@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import React, { createContext, useEffect, useState } from 'react';
 import { db } from '../firebase/config';
 
@@ -7,13 +7,10 @@ type ContextProps = {
   setUserLoggedInfo: (arg0: any) => void;
   userLogged: boolean;
   setUserLogged: (arg0: boolean) => void;
-  checkUserRegistration: () => void;
   bookmarks: any;
   setBookmarks: (arg0: any) => void;
-  allPosts: any;
-  deletePost: (arg0: any) => void;
-  setAllPosts: (arg0: any) => void;
   fetchedBooks: number;
+  checkUserRegistration: () => void;
 };
 
 export const contextData = createContext({} as ContextProps);
@@ -29,33 +26,13 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
   const [bookmarks, setBookmarks] = useState<any>([]);
   const [fetchedBooks, setFetchedBooks] = useState(0);
 
-  const [allPosts, setAllPosts] = useState<any>([]);
-  const [fetched, setFetched] = useState(false);
-
   useEffect(() => {
     !userLogged && checkUserRegistration();
-    !fetched && getAllPosts();
   }, []);
 
   useEffect(() => {
-    getBookmarks();
-  }, [fetched]);
-
-  // get all posts
-  const getAllPosts = async () => {
-    const querySnapshot = await getDocs(collection(db, 'posts'));
-
-    querySnapshot.forEach((doc: any) => {
-      setAllPosts((prev: any) => [...prev, { ...doc.data(), id: doc.id }]);
-      setFetched(true);
-    });
-  };
-
-  // delete post
-  const deletePost = async (itemUid: string) => {
-    await deleteDoc(doc(db, 'posts', `${itemUid}`));
-    setAllPosts(allPosts.filter((item: any) => item.id !== itemUid));
-  };
+    userLogged && getBookmarks();
+  }, [userLogged]);
 
   // get all bookmarks
   const getBookmarks = async () => {
@@ -93,9 +70,6 @@ export function ContextOverAll({ children }: ContextOverAllProps) {
         checkUserRegistration,
         bookmarks,
         setBookmarks,
-        allPosts,
-        deletePost,
-        setAllPosts,
         fetchedBooks,
       }}>
       {children}
